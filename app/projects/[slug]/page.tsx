@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Building2 } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Building2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ThreeDModelViewer from "@/components/three-d-model-viewer"
@@ -42,7 +42,6 @@ const getProjectBySlug = (slug: string): Project | null => {
         "A modern coastal home designed to maximize ocean views while providing privacy and comfort. The Azure Residence features an open floor plan with floor-to-ceiling windows, sustainable materials, and smart home technology throughout.",
       longDescription:
         "Perched on a hillside overlooking the Pacific Ocean, the Azure Residence was designed to create a seamless connection between indoor and outdoor living. The client, a tech entrepreneur with a young family, wanted a home that would take advantage of the spectacular views while providing private spaces for work and relaxation.\n\nThe design features a series of stacked volumes that step down the hillside, with each level offering unique perspectives of the surrounding landscape. The main living areas are oriented toward the ocean, with retractable glass walls that open to expansive terraces. A cantilevered infinity pool appears to merge with the horizon, creating a dramatic focal point.\n\nSustainability was a key consideration, with solar panels, rainwater harvesting, and passive cooling systems integrated into the design. Materials were selected for their durability, low maintenance, and environmental impact, including locally sourced timber, recycled steel, and high-performance glazing.",
-      // Replace with your project images
       images: [
         "/images/1.jpg",
         "/images/B.jpg",
@@ -51,9 +50,7 @@ const getProjectBySlug = (slug: string): Project | null => {
         "/images/F.jpg",
         "/images/A.jpg",
       ],
-      // This would be the path to your 3D model file
       modelPath: "/assets/3d/duck.glb",
-      // This would be the path to your blueprint file
       blueprintPath: "/placeholder.svg?height=1200&width=1600",
       relatedProjects: [2, 5],
     },
@@ -63,9 +60,19 @@ const getProjectBySlug = (slug: string): Project | null => {
   return projects[slug] || null
 }
 
-export default function ProjectDetailPage({ params }: { params: { slug: string } }) {
-  const project = getProjectBySlug(params.slug)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+// The correct approach for Next.js with params as Promises
+export default function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  // Use a Server Component wrapper to handle the async params
+  return <ProjectDetailContent paramsPromise={params} />;
+}
+
+// Create a separate component to handle the unwrapped params
+function ProjectDetailContent({ paramsPromise }: { paramsPromise: Promise<{ slug: string }> }) {
+  // Properly unwrap the params Promise
+  const params = React.use(paramsPromise);
+  const slug = params.slug;
+  const project = getProjectBySlug(slug);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   if (!project) {
     return (
@@ -111,6 +118,9 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
         </div>
       </section>
 
+      {/* Rest of the component remains the same */}
+      {/* ... */}
+      
       {/* Project Details */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
@@ -262,7 +272,6 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                       height={1200}
                       className="w-full h-full object-contain"
                     />
-                    {/* In a real implementation, this would be an interactive blueprint viewer */}
                   </div>
                 </TabsContent>
               </Tabs>
@@ -273,4 +282,3 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
     </main>
   )
 }
-

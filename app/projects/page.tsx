@@ -1,10 +1,9 @@
 "use client"
 
-import React from "react"
-import { use, useState } from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Building2 } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Building2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ThreeDModelViewer from "@/components/three-d-model-viewer"
@@ -64,8 +63,8 @@ const getProjectBySlug = (slug: string): Project | null => {
 }
 
 export default function ProjectDetailPage({ params }: { params: { slug: string } }) {
-  // Safely unwrap params
-  const slug = use(Promise.resolve(params.slug))
+  // FIXED: Removed the use(Promise.resolve()) call and directly use params.slug
+  const slug = params.slug
   
   // Fetch project data
   const project = getProjectBySlug(slug)
